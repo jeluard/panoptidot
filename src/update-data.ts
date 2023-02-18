@@ -371,7 +371,7 @@ async function extractAll(
       const indexFileName = `${indexesFolder}/index.json`;
       const { data } = await readContentFile(indexFileName);
       data[rangeTo] = delegates ? ['delegates'] : [];
-      await fs.writeFile(indexFileName, JSON.stringify(data));
+      await fs.writeFile(indexFileName, JSON.stringify({ data: data }));
     }
   }
 }
