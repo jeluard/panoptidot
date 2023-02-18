@@ -13,7 +13,7 @@
     "check:lint": "eslint ./src",
     "check:tsc": "tsc --noEmit",
     "check:all": "yarn check:tsc && yarn check:format && yarn check:lint",
-    "script:update-data": "tsc && node out/scripts/update-data.js"
+    "script:update-data": "tsc && node out/update-data.js"
   },
   "dependencies": {
     "@polkadot/api": "9.14.1"
