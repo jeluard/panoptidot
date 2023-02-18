@@ -16,7 +16,6 @@ jobs:
 
       - name: Run update
         run: yarn && yarn script:update-data
-        working-directory: ./scripts
         continue-on-error: true
         timeout-minutes: 45
 
