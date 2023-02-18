@@ -14,8 +14,11 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v3
 
-      - name: Run update
-        run: yarn && yarn script:update-data
+      - name: Install
+        run: yarn install --immutable --immutable-cache --check-cache
+
+      - name: Update data
+        run: yarn script:update-data
         continue-on-error: true
         timeout-minutes: 45
 
