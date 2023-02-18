@@ -1,0 +1,29 @@
+{
+  "name": "panoptigov",
+  "version": "1.0.0",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "clean": "rm -rf .parcel-cache dist node_modules yarn.lock",
+    "prepare": "husky install",
+    "fix:format": "prettier -w ./src",
+    "fix:lint": "eslint ./src --fix",
+    "fix:all": "yarn fix:format && yarn fix:lint",
+    "check:format": "prettier -c ./src",
+    "check:lint": "eslint ./src",
+    "check:tsc": "tsc --noEmit",
+    "check:all": "yarn check:tsc && yarn check:format && yarn check:lint",
+    "script:update-data": "tsc && node out/scripts/update-data.js"
+  },
+  "dependencies": {
+    "@polkadot/api": "9.14.1"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "5.52.0",
+    "eslint": "8.34.0",
+    "eslint-config-prettier": "8.6.0",
+    "husky": "8.0.3",
+    "prettier": "2.8.4",
+    "typescript": "4.9.5"
+  }
+}
