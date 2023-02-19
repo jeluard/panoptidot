@@ -27,7 +27,7 @@ jobs:
           git config user.name github-actions
           git config user.email github-actions@github.com
           git add data
-          git commit -m "Updated indexes"
+          git diff-index --quiet HEAD || git commit -m "Updated indexes"
           git status
           git pull --rebase --autostash
           git push
