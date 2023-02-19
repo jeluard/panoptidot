@@ -3,7 +3,7 @@ name: Update data
 on:
   workflow_dispatch:
   schedule:
-    - cron: '1 * * * *'
+    - cron: '2 * * * *'
 
 jobs:
   update:
@@ -20,7 +20,7 @@ jobs:
       - name: Update data
         run: yarn script:update-data
         continue-on-error: true
-        timeout-minutes: 45
+        timeout-minutes: 110
 
       - name: Commit
         run: |
