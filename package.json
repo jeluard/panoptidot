@@ -16,7 +16,7 @@
     "script:update-data": "tsc && node out/update-data.js"
   },
   "dependencies": {
-    "@polkadot/api": "9.14.1"
+    "@polkadot/api": "9.14.2"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "5.52.0",
