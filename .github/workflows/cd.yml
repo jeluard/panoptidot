@@ -17,8 +17,13 @@ jobs:
       - name: Install
         run: yarn install --immutable --immutable-cache --check-cache
 
-      - name: Update data
-        run: yarn script:update-data
+      - name: Sync
+        run: yarn script:sync
+        continue-on-error: true
+        timeout-minutes: 110
+
+      - name: Create indexes
+        run: yarn script:create-indexes
         continue-on-error: true
         timeout-minutes: 110
 

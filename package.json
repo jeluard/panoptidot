@@ -6,6 +6,8 @@
   "scripts": {
     "clean": "rm -rf .parcel-cache dist node_modules yarn.lock",
     "prepare": "husky install",
+    "dev": " mkdir -p dist && cp -R data/ dist/ && parcel serve ./src/index.html",
+    "build": "parcel build ./src/index.html --detailed-report --log-level verbose --public-url ${PUBLIC_URL}",
     "fix:format": "prettier -w ./src",
     "fix:lint": "eslint ./src --fix",
     "fix:all": "yarn fix:format && yarn fix:lint",
@@ -13,18 +15,42 @@
     "check:lint": "eslint ./src",
     "check:tsc": "tsc --noEmit",
     "check:all": "yarn check:tsc && yarn check:format && yarn check:lint",
-    "script:update-data": "tsc && node out/update-data.js"
+    "script:sync": "tsc && node out/sync.js",
+    "script:create-indexes": "tsc && node out/create-indexes.js"
   },
+  "source": "src/index.tsx",
+  "app": "dist/index.html",
+  "targets": {
+    "app": {}
+  },
+  "browserslist": [
+    "last 2 versions"
+  ],
   "dependencies": {
-    "@polkadot/api": "9.14.2"
+    "@polkadot/api": "9.14.2",
+    "daisyui": "2.50.1",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-json-view": "1.21.3",
+    "zustand": "4.3.3"
   },
   "devDependencies": {
+    "@parcel/compressor-brotli": "2.8.3",
+    "@parcel/compressor-gzip": "2.8.3",
+    "@types/react": "18.0.28",
+    "@types/react-dom": "18.0.11",
     "@typescript-eslint/eslint-plugin": "5.53.0",
     "@typescript-eslint/parser": "5.53.0",
     "eslint": "8.34.0",
     "eslint-config-prettier": "8.6.0",
+    "eslint-plugin-react": "7.32.2",
     "husky": "8.0.3",
+    "parcel": "2.8.3",
+    "parcel-resolver-fix-ts-esm-shit": "0.0.1",
     "prettier": "2.8.4",
+    "prettier-plugin-tailwindcss": "0.2.3",
+    "process": "0.11.10",
+    "tailwindcss": "3.2.7",
     "typescript": "4.9.5"
   }
 }
