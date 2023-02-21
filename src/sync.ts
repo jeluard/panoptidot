@@ -210,7 +210,7 @@ async function extractAll(
       const blocksIndexFileName = `${blocksFolder}/index.json`;
       await fs.writeFile(
         blocksIndexFileName,
-        JSON.stringify({ data: [rangeFrom, rangeTo] })
+        JSON.stringify({ data: [from, rangeTo] })
       );
 
       const after = Date.now();
