@@ -348,32 +348,37 @@ async function extractAll(
       );
       await fs.writeFile(
         fileName,
-        JSON.stringify({ meta: { span: { from, to }, structure }, newData })
+        JSON.stringify({ meta: { span: { rangeFrom, rangeTo }, structure }, newData })
       );
+
+      // Update index of all blocks
+      const blocksIndexFileName = `${blocksFolder}/index.json`;
+      await fs.writeFile(blocksIndexFileName, JSON.stringify({ data: [rangeFrom, rangeTo] }));
+
       const after = Date.now();
       console.log(`Took ${(after - before) / 1000}s`);
-
-      const indexedBlockFolder = `${indexesFolder}/${rangeTo}`;
-      await fs.mkdir(indexedBlockFolder, { recursive: true });
-
-      allData = { ...allData, ...newData };
-
-      const { delegates } = createIndexes(allData);
-      if (delegates) {
-        const delegatesFileName = `${indexedBlockFolder}/delegates.json`;
-        await fs.writeFile(
-          delegatesFileName,
-          JSON.stringify({ meta: { block: to }, data: delegates })
-        );
-      }
-
-      // Update index of all indexes
-      const indexFileName = `${indexesFolder}/index.json`;
-      const { data } = await readContentFile(indexFileName);
-      data[rangeTo] = delegates ? ['delegates'] : [];
-      await fs.writeFile(indexFileName, JSON.stringify({ data: data }));
     }
   }
+}
+
+async function extractIndexes() {
+  const indexesFolder = `${folder}/indexes`;
+  await fs.mkdir(indexesFolder, { recursive: true });
+  const indexFileName = `${indexesFolder}/index.json`;
+  let { data }: { data: Array<string> } = await readContentFile(indexFileName);
+
+  const { delegates } = createIndexes({});
+      if (delegates) {
+    const delegatesFileName = `${indexesFolder}/delegates.json`;
+        await fs.writeFile(
+          delegatesFileName,
+      JSON.stringify({ meta: { span: { from, to } }, data: delegates })
+        );
+
+    data.push('delegates');
+      }
+
+  await fs.writeFile(indexFileName, JSON.stringify({ data }));
 }
 
 async function extractFirstReferendaBlock(
