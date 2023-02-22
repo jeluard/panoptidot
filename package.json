@@ -6,7 +6,7 @@
   "scripts": {
     "clean": "rm -rf .parcel-cache dist node_modules yarn.lock",
     "prepare": "husky install",
-    "dev": " mkdir -p dist && cp -R data/ dist/ && parcel serve ./src/index.html",
+    "dev": "mkdir -p dist/data && cp -R data/ dist/data/ && parcel serve ./src/index.html",
     "build": "parcel build ./src/index.html --detailed-report --log-level verbose --public-url ${PUBLIC_URL}",
     "fix:format": "prettier -w ./src",
     "fix:lint": "eslint ./src --fix",

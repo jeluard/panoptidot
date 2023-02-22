@@ -64,7 +64,7 @@ function createIndexes(
                 /* delegate(class: u16, to: MultiAddress, conviction: PalletConvictionVotingConviction, balance: u128) */
                 const [track, to, conviction, balance] = args;
                 const id = to.id as string;
-                const existingDelegators = index[id].delegators || {};
+                const existingDelegators = index[id]?.delegators || {};
                 const existingDelegatee: Record<number, Delegation> =
                   existingDelegators[signer] || {};
                 existingDelegatee[track] = { conviction, balance };
@@ -166,9 +166,7 @@ async function extractIndexes(folder: string) {
   const indexesFolder = `${folder}/indexes`;
   await fs.mkdir(indexesFolder, { recursive: true });
   const indexFileName = `${indexesFolder}/index.json`;
-  const { data }: { data: Array<string> } = await readContentFile(
-    indexFileName
-  );
+  const data = [];
 
   const { delegates } = createIndexes(allBlocks);
   if (delegates) {
