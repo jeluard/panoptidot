@@ -10,7 +10,6 @@ jobs:
   # Continuously deploys the content of main branch
   deploy:
     runs-on: ubuntu-latest
-    if: github.event_name == 'push'
     permissions:
       pages: write
       id-token: write
