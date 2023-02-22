@@ -1,0 +1,48 @@
+name: Continuous Integration
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 */2 * * *' # Every 2 hours
+  push:
+    branches:
+      - main
+jobs:
+  # Continuously deploys the content of main branch
+  deploy:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup node
+        uses: actions/setup-node@v3
+
+      - name: Install
+        run: yarn install --immutable --immutable-cache --check-cache
+
+      - name: Setup Pages
+        id: pages
+        uses: actions/configure-pages@v3
+
+      - name: Build
+        run: yarn build
+        env:
+          PUBLIC_URL: ${{ steps.pages.outputs.base_url }}
+      
+      - name: Upload artifact
+        # Automatically uploads an artifact from the './_site' directory by default
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: dist/
+          retention-days: 10
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1
+
