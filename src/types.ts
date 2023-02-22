@@ -19,7 +19,10 @@ export type BlockNumber = number;
 
 export type Delegatees = Record<Address, Record<TrackId, Delegation>>;
 
-export type Delegates = Record<Address, Delegatees>;
+export type Delegates = Record<
+  Address,
+  { totalDelegation: number; delegators: Delegatees }
+>;
 
 export type Conviction =
   | 'None'

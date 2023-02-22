@@ -64,12 +64,16 @@ function createIndexes(
                 /* delegate(class: u16, to: MultiAddress, conviction: PalletConvictionVotingConviction, balance: u128) */
                 const [track, to, conviction, balance] = args;
                 const id = to.id as string;
-                const existingDelegator = index[id] || {};
+                const existingDelegators = index[id].delegators || {};
                 const existingDelegatee: Record<number, Delegation> =
-                  existingDelegator[signer] || {};
+                  existingDelegators[signer] || {};
                 existingDelegatee[track] = { conviction, balance };
-                existingDelegator[signer] = existingDelegatee;
-                index[id] = existingDelegator;
+                existingDelegators[signer] = existingDelegatee;
+
+                index[id] = {
+                  totalDelegation: totalDelegation(existingDelegators),
+                  delegators: existingDelegators,
+                };
               } else if (method == 'undelegate') {
                 /* undelegate(class: u16) */
                 const [track] = args;
@@ -77,11 +81,13 @@ function createIndexes(
                   index
                 )) {
                   for (const [delegatee, delegations] of Object.entries(
-                    delegatees
+                    delegatees.delegators
                   )) {
                     if (delegatee == signer) {
                       delete delegations[track];
-                      index[delegate][delegatee] = delegations;
+                      index[delegate].totalDelegation -=
+                        delegationFor(delegations);
+                      index[delegate].delegators[delegatee] = delegations;
                       break top;
                     }
                   }
@@ -123,16 +129,17 @@ function convictionMultiplier(conviction: Conviction): number {
   }
 }
 
+function delegationFor(delegations: Record<number, Delegation>): number {
+  return Object.values(delegations).reduce(
+    (acc, delegation) =>
+      acc + delegation.balance * convictionMultiplier(delegation.conviction),
+    0
+  );
+}
+
 function totalDelegation(delegatees: Delegatees): number {
   return Object.values(delegatees).reduce(
-    (acc, delegations) =>
-      acc +
-      Object.values(delegations).reduce(
-        (acc, delegation) =>
-          acc +
-          delegation.balance * convictionMultiplier(delegation.conviction),
-        0
-      ),
+    (acc, delegations) => acc + delegationFor(delegations),
     0
   );
 }
@@ -156,12 +163,6 @@ async function extractIndexes(folder: string) {
   ).flat();
   const content = await Promise.all(files.map(readContentFile));
   const allBlocks = mergeBlocks<any>(content);
-
-  /*console.log(await (await listDirectories(folder)).reduce((acc, file) => {
-    const { data } = await readContentFile(file)
-    return acc;
-  }, {}))*/
-
   const indexesFolder = `${folder}/indexes`;
   await fs.mkdir(indexesFolder, { recursive: true });
   const indexFileName = `${indexesFolder}/index.json`;
