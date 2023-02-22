@@ -6,8 +6,8 @@
   "scripts": {
     "clean": "rm -rf .parcel-cache dist node_modules yarn.lock",
     "prepare": "husky install",
-    "dev": "mkdir -p dist/data && cp -R data/ dist/data/ && parcel serve ./src/index.html",
-    "build": "mkdir -p dist/data && cp -R data/ dist/data/ && parcel build ./src/index.html --detailed-report --log-level verbose --public-url ${PUBLIC_URL}",
+    "dev": "mkdir -p dist/data && cp -R data dist/ && parcel serve ./src/index.html",
+    "build": "mkdir -p dist/data && cp -R data dist/ && parcel build ./src/index.html --detailed-report --log-level verbose --public-url ${PUBLIC_URL}",
     "fix:format": "prettier -w ./src",
     "fix:lint": "eslint ./src --fix",
     "fix:all": "yarn fix:format && yarn fix:lint",
