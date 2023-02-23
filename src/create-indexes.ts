@@ -117,7 +117,8 @@ function createIndexes(
                 /* vote(poll_index: Compact<u32>, vote: PalletConvictionVotingVoteAccountVote) */
                 const [poll_index, vote] = args;
                 const existingVotes = index[signer] || {};
-                existingVotes[poll_index] = vote;
+                existingVotes[poll_index] =
+                  typeof vote == 'string' ? JSON.parse(vote) : vote;
                 index[signer] = existingVotes;
               } else if (method == 'removeVote') {
                 /* removeVote(class: Option<u16>, index: u32) */
