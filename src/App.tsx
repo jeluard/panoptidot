@@ -55,9 +55,9 @@ export function App(): JSX.Element {
       </div>
       <div>
         {indexes && indexes[tab!] ? (
-          <ReactJson src={indexes[tab!]} collapsed={2} />
+          <ReactJson src={indexes[tab!]} collapsed={1} />
         ) : blocks ? (
-          <ReactJson src={blocks} collapsed={2} />
+          <ReactJson src={blocks} collapsed={1} />
         ) : (
           <></>
         )}
