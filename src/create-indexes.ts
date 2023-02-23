@@ -50,7 +50,7 @@ function extractExtrinsicSuccessEvent(
 
 function createIndexes(
   allData: Record<string, Record<string, Record<string, Extrinsic>>>
-): { delegates: Delegates } {
+): Record<string, object> {
   const entries = Array.from(Object.entries(allData));
   entries.sort(([block1], [block2]) => parseInt(block1) - parseInt(block2));
   const delegates = entries.reduce((index, [, extrinsics]) => {
@@ -171,18 +171,18 @@ async function extractIndexes(folder: string) {
   const indexesFolder = `${folder}/indexes`;
   await fs.mkdir(indexesFolder, { recursive: true });
   const indexFileName = `${indexesFolder}/index.json`;
-  const data = [];
 
-  const { delegates } = createIndexes(allBlocks);
-  if (delegates) {
-    const delegatesFileName = `${indexesFolder}/delegates.json`;
+  const indexes = createIndexes(allBlocks);
+  Object.entries(indexes).forEach(async ([index, data]) => {
+    const delegatesFileName = `${indexesFolder}/${index}.json`;
     await fs.writeFile(
       delegatesFileName,
-      JSON.stringify({ /*meta: { span: { from, to } },*/ data: delegates })
+      JSON.stringify({ /*meta: { span: { from, to } },*/ data })
     );
+  });
 
-    data.push('delegates');
-  }
-
-  await fs.writeFile(indexFileName, JSON.stringify({ data }));
+  await fs.writeFile(
+    indexFileName,
+    JSON.stringify({ data: Object.keys(indexes) })
+  );
 }
