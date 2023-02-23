@@ -106,7 +106,41 @@ function createIndexes(
     return index;
   }, {} as Delegates);
 
-  return { delegates };
+  const votes = entries.reduce((index, [, extrinsics]) => {
+    Object.entries(extrinsics).forEach(([section, methods]) => {
+      if (section == 'convictionVoting') {
+        Object.entries(methods).forEach(
+          ([method, { signer, args, events }]) => {
+            if (extractExtrinsicSuccessEvent(events)) {
+              // Ignore failed extrinsics
+              if (method == 'vote') {
+                /* vote(poll_index: Compact<u32>, vote: PalletConvictionVotingVoteAccountVote) */
+                const [poll_index, vote] = args;
+                const existingVotes = index[signer] || {};
+                existingVotes[poll_index] = vote;
+                index[signer] = existingVotes;
+              } else if (method == 'removeVote') {
+                /* removeVote(class: Option<u16>, index: u32) */
+                const [_, poll_index] = args;
+                const existingVotes = index[signer] || {};
+                delete existingVotes[poll_index];
+                index[signer] = existingVotes;
+              } else if (method == 'removeOtherVote') {
+                /* removeOtherVote(target: MultiAddress, class: u16, index: u32) */
+                const [target, _, poll_index] = args;
+                const existingVotes = index[target] || {};
+                delete existingVotes[poll_index];
+                index[signer] = existingVotes;
+              }
+            }
+          }
+        );
+      }
+    });
+    return index;
+  }, {} as Record<string, any>);
+
+  return { delegates, votes };
 }
 
 async function readContentFile(fileName: string): Promise<{ data: any }> {
