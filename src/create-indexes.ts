@@ -125,13 +125,21 @@ function createIndexes(
                 const [_, poll_index] = args;
                 const existingVotes = index[signer] || {};
                 delete existingVotes[poll_index];
-                index[signer] = existingVotes;
+                if (Object.entries(existingVotes).length > 0) {
+                  index[signer] = existingVotes;
+                } else {
+                  delete index[signer];
+                }
               } else if (method == 'removeOtherVote') {
                 /* removeOtherVote(target: MultiAddress, class: u16, index: u32) */
                 const [target, _, poll_index] = args;
                 const existingVotes = index[target] || {};
                 delete existingVotes[poll_index];
-                index[signer] = existingVotes;
+                if (Object.entries(existingVotes).length > 0) {
+                  index[target] = existingVotes;
+                } else {
+                  delete index[target];
+                }
               }
             }
           }
