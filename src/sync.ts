@@ -16,7 +16,7 @@ const api = await newApi({
 
 type BlockNumber = number;
 
-// First block with OpenGov on kusama: 0x925eea1b3a1944fb592aa26b4e41c0926921d2e289a932942d6267a038cbcbce ; 15426014
+// Last block without OpenGov on kusama: 0x925eea1b3a1944fb592aa26b4e41c0926921d2e289a932942d6267a038cbcbce ; 15426014; https://kusama.subscan.io/block/15426015
 
 //console.log(api.registry.lookup.types.map(o => o.type.path.toString()))
 //console.log(        api.registry.getDefinition('PalletConvictionVotingVoteAccountVote'))

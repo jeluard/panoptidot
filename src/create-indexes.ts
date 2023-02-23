@@ -85,9 +85,14 @@ function createIndexes(
                   )) {
                     if (delegatee == signer) {
                       delete delegations[track];
-                      index[delegate].totalDelegation -=
-                        delegationFor(delegations);
-                      index[delegate].delegators[delegatee] = delegations;
+                      if (Object.entries(delegations).length > 0) {
+                        index[delegate].delegators[delegatee] = delegations;
+                      } else {
+                        delete index[delegate].delegators[delegatee];
+                      }
+                      index[delegate].totalDelegation = totalDelegation(
+                        index[delegate].delegators
+                      );
                       break top;
                     }
                   }
