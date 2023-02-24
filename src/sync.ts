@@ -186,12 +186,10 @@ async function extractAll(
     if (lastRange) {
       // Suppress all previous chunks
       const files = await listFiles(chunkFolder);
-      console.log(files);
       const filesToRemove = files.filter((file) =>
         file.startsWith(`${chunkFolder}/${rangeFrom}`)
       );
       filesToRemove.forEach((file) => fs.rm(file));
-      console.log(filesToRemove);
     }
 
     const fileName = `${chunkFolder}/${rangeFrom}-${rangeTo}.json`;

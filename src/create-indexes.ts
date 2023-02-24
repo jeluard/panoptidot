@@ -130,7 +130,14 @@ function createIndexes(
     return index;
   }, {} as Record<string, any>);
 
-  return { blocks: Object.fromEntries(blocks), delegates, votes };
+  const flatBlocks = blocks.reduce((acc, [key, value]) => {
+    const [section, rest] = Object.entries(value)[0];
+    const [method, extrinsic] = Object.entries(rest)[0];
+    acc[key] = { section, method, extrinsic };
+    return acc;
+  }, {} as Record<string, object>);
+
+  return { blocks: flatBlocks, delegates, votes };
 }
 
 async function readContentFile(fileName: string): Promise<{ data: any }> {
