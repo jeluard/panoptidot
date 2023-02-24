@@ -1,5 +1,4 @@
 import * as fs from 'fs/promises';
-import { constants } from 'fs';
 import { DispatchInfo } from '@polkadot/types/interfaces/types.js';
 import {
   Conviction,
@@ -9,27 +8,9 @@ import {
   Event,
   Extrinsic,
 } from './types.js';
+import { checkFileExists, listDirectories, listFiles } from './utils/fs.js';
 
 await extractIndexes('data');
-
-async function listDirectories(source: string) {
-  return (await fs.readdir(source, { withFileTypes: true }))
-    .filter((dirent) => dirent.isDirectory())
-    .map((dirent) => `${source}/${dirent.name}`);
-}
-
-async function listFiles(source: string) {
-  return (await fs.readdir(source, { withFileTypes: true }))
-    .filter((dirent) => dirent.isFile())
-    .map((dirent) => `${source}/${dirent.name}`);
-}
-
-async function checkFileExists(file: string): Promise<boolean> {
-  return fs
-    .access(file, constants.F_OK)
-    .then(() => true)
-    .catch(() => false);
-}
 
 function extractEvent(
   events: Array<Event>,
@@ -51,9 +32,9 @@ function extractExtrinsicSuccessEvent(
 function createIndexes(
   allData: Record<string, Record<string, Record<string, Extrinsic>>>
 ): Record<string, object> {
-  const entries = Array.from(Object.entries(allData));
-  entries.sort(([block1], [block2]) => parseInt(block1) - parseInt(block2));
-  const delegates = entries.reduce((index, [, extrinsics]) => {
+  const blocks = Array.from(Object.entries(allData));
+  blocks.sort(([block1], [block2]) => parseInt(block1) - parseInt(block2));
+  const delegates = blocks.reduce((index, [, extrinsics]) => {
     Object.entries(extrinsics).forEach(([section, methods]) => {
       if (section == 'convictionVoting') {
         Object.entries(methods).forEach(
@@ -106,7 +87,7 @@ function createIndexes(
     return index;
   }, {} as Delegates);
 
-  const votes = entries.reduce((index, [, extrinsics]) => {
+  const votes = blocks.reduce((index, [, extrinsics]) => {
     Object.entries(extrinsics).forEach(([section, methods]) => {
       if (section == 'convictionVoting') {
         Object.entries(methods).forEach(
@@ -149,7 +130,7 @@ function createIndexes(
     return index;
   }, {} as Record<string, any>);
 
-  return { delegates, votes };
+  return { blocks: Object.fromEntries(blocks), delegates, votes };
 }
 
 async function readContentFile(fileName: string): Promise<{ data: any }> {

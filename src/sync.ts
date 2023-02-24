@@ -3,12 +3,12 @@ import '@polkadot/rpc-augment';
 import '@polkadot/types-augment';
 
 import * as fs from 'fs/promises';
-import { constants } from 'fs';
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import type { FrameSystemEventRecord } from '@polkadot/types/lookup';
 import { BlockHash } from '@polkadot/types/interfaces/types.js';
 import { newApi } from './utils/polkadot-api.js';
 import { Event, Extrinsic } from './types.js';
+import { checkFileExists, listFiles } from './utils/fs.js';
 
 const api = await newApi({
   provider: new WsProvider(['wss://kusama-rpc.polkadot.io']),
@@ -151,13 +151,6 @@ function* ranges(
   }
 }
 
-async function checkFileExists(file: string): Promise<boolean> {
-  return fs
-    .access(file, constants.F_OK)
-    .then(() => true)
-    .catch(() => false);
-}
-
 async function extractAll(
   api: ApiPromise,
   from: number,
@@ -188,6 +181,18 @@ async function extractAll(
       rangeFrom - (rangeFrom % (chunkSize * chunksPerFolder));
     const chunkFolder = `${blocksFolder}/${blocksFolderIndex}`;
     await fs.mkdir(chunkFolder, { recursive: true });
+
+    const lastRange = rangeTo == to;
+    if (lastRange) {
+      // Suppress all previous chunks
+      const files = await listFiles(chunkFolder);
+      console.log(files);
+      const filesToRemove = files.filter((file) =>
+        file.startsWith(`${chunkFolder}/${rangeFrom}`)
+      );
+      filesToRemove.forEach((file) => fs.rm(file));
+      console.log(filesToRemove);
+    }
 
     const fileName = `${chunkFolder}/${rangeFrom}-${rangeTo}.json`;
     if (!(await checkFileExists(fileName))) {

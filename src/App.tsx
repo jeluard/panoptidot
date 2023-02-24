@@ -36,28 +36,18 @@ export function App(): JSX.Element {
   return (
     <>
       <div className="tabs tabs-boxed">
-        <a
-          className={`${tabClass(undefined)}`}
-          onClick={() => setTab(undefined)}
-        >
-          Blocks
-        </a>
-        <>
-          {indexes &&
-            Object.entries(indexes).map(([name, data], index) => {
-              return (
-                <a className={`${tabClass(name)}`} onClick={() => setTab(name)}>
-                  {name}
-                </a>
-              );
-            })}
-        </>
+        {indexes &&
+          Object.entries(indexes).map(([name, data], index) => {
+            return (
+              <a className={`${tabClass(name)}`} onClick={() => setTab(name)}>
+                {name}
+              </a>
+            );
+          })}
       </div>
       <div>
         {indexes && indexes[tab!] ? (
           <ReactJson src={indexes[tab!]} collapsed={1} />
-        ) : blocks ? (
-          <ReactJson src={blocks} collapsed={1} />
         ) : (
           <></>
         )}
